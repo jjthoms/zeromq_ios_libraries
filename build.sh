@@ -15,7 +15,9 @@ ZMQ_DOWNLOAD=zmq.tar.gz
 ZMQ_FILES=zmq
 
 # from https://github.com/zeromq/czmq/releases/tag
-CZMQ_VERSION=v4.2.0/czmq-4.2.0.tar.gz
+#CZMQ_VERSION=v4.2.0/czmq-4.2.0.tar.gz  # does not compile, fails looking for <curl/curl.h>
+CZMQ_VERSION=v4.1.0/czmq-4.1.0.tar.gz  # works, current target
+#CZMQ_VERSION=v3.0.2/czmq-3.0.2.tar.gz   # used previously, not compatible with zmq 4.3.3
 CZMQ_DOWNLOAD=czmq.tar.gz
 CZMQ_FILES=czmq
 
@@ -39,6 +41,21 @@ tar --strip 1 -xvf $SODIUM_DOWNLOAD -C $SODIUM_FILES
 echo "extracting zmq..."
 mkdir $ZMQ_FILES
 tar --strip 1 -xvf $ZMQ_DOWNLOAD -C $ZMQ_FILES
+
+ZMQ_PATCH_VERSION=v4.3.3/zeromq-4.3.3.tar.gz
+if [[ $ZMQ_VERSION == $ZMQ_PATCH_VERSION ]]; then
+  cp -f ../patch_zmq_4-3-3/tcp_address.cpp $ZMQ_FILES/src/
+  cp -f ../patch_zmq_4-3-3/udp_engine.cpp $ZMQ_FILES/src/
+  cp -f ../patch_zmq_4-3-3/test_inproc_connect.cpp $ZMQ_FILES/tests/
+  cp -f ../patch_zmq_4-3-3/test_issue_566.cpp $ZMQ_FILES/tests/
+  cp -f ../patch_zmq_4-3-3/test_proxy.cpp $ZMQ_FILES/tests/
+  cp -f ../patch_zmq_4-3-3/test_reqrep_tcp.cpp $ZMQ_FILES/tests/
+  cp -f ../patch_zmq_4-3-3/test_setsockopt.cpp $ZMQ_FILES/tests/
+  cp -f ../patch_zmq_4-3-3/test_stream_disconnect.cpp $ZMQ_FILES/tests/
+  cp -f ../patch_zmq_4-3-3/test_unbind_wildcard.cpp $ZMQ_FILES/tests/
+  cp -f ../patch_zmq_4-3-3/test_ws_transport.cpp $ZMQ_FILES/tests/
+  cp -f ../patch_zmq_4-3-3/testutil.cpp $ZMQ_FILES/tests/
+fi
 
 echo "extracting czmq..."
 mkdir $CZMQ_FILES
